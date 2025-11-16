@@ -13,9 +13,14 @@ builder.Services.AddDbContext<StoreContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-// how about builder.Services.AddScoped<ProductRepository>(); ???
-//vid 20, dependency injection, <interface, class cần dc truyền vào> framework sẽ tự tạo instance của obj define trong constructor và tự truyền vào cho class   
+// 1. how about builder.Services.AddScoped<ProductRepository>(); ???
+// A: DEPEND ON ABSTRACTION NOT CONCRETION, if create like that you have to inject a concrete class instead of an interface
+// 2. vid 20, dependency injection, <interface, class implemented> 
+//when class call this defined interface (eg:ProductController(IGenericRepository repo))
+// an instance of GenericRepository will be create and pass to 'repo'
+
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 var app = builder.Build();
 

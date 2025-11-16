@@ -1,0 +1,7 @@
+1. builder.Services.AddScoped<ProductRepository>() vs builder.Services.AddScoped<IProductRepository, ProductRepository>();
+2. ToList vs ToListAsync, SaveChangesAsync() or SaveChanges(),... : https://stackoverflow.com/questions/30042791/entity-framework-savechanges-vs-savechangesasync-and-find-vs-findasync
+3. IEnumerable vs IQueryable: https://stackoverflow.com/a/23359554
+4. Public class with static method? Why not static class with static method
+5. Products.Where(x => 
+        (string.IsNullOrEmpty(brand) || x.Brand == brand) &&
+        (string.IsNullOrEmpty(type) || x.Type == type))
