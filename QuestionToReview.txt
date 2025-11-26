@@ -5,3 +5,4 @@
 5. Products.Where(x => 
         (string.IsNullOrEmpty(brand) || x.Brand == brand) &&
         (string.IsNullOrEmpty(type) || x.Type == type))
+6.ProductsController line 20, how type T is automatically recognize as Product without set <Product> to <T>
