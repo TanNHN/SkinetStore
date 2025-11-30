@@ -6,3 +6,5 @@
         (string.IsNullOrEmpty(brand) || x.Brand == brand) &&
         (string.IsNullOrEmpty(type) || x.Type == type))
 6.ProductsController line 20, how type T is automatically recognize as Product without set <Product> to <T>
+7. SelectMany
+8. Products.Select(x => ["Iphone", "Xiaomi"].Contains(x.Type)) does this work as product filter conditions?
