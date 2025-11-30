@@ -8,3 +8,17 @@
 6.ProductsController line 20, how type T is automatically recognize as Product without set <Product> to <T>
 7. SelectMany
 8. Products.Select(x => ["Iphone", "Xiaomi"].Contains(x.Type)) does this work as product filter conditions?
+
+Note:
+_ Cross-origin resource sharing, which is a security feature 
+implemented by web browsers to control how resources on a web page can be requested
+
+_ So different ports means different origin.
+And if we want our clients application to be able to request resources from our API server, then we
+have to allow that and pass the Cors support back as a Cors header to the browser.
+
+_ app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200", "https://localhost:4200"));
+as they come from this origin, then our web browser will allow us to request this data from
+our API and display it on the page.
+If we don't have this, the request can still go to our API server, but it's a browser security feature
+that will prevent us from actually loading the data into our browser. (but what is the point if the request can go to our API without blocking?)
