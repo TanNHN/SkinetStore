@@ -10,6 +10,8 @@
 8. Products.Select(x => ["Iphone", "Xiaomi"].Contains(x.Type)) does this work as product filter conditions?
 
 Note:
+
+BE:
 _ Cross-origin resource sharing, which is a security feature 
 implemented by web browsers to control how resources on a web page can be requested
 
@@ -22,3 +24,15 @@ as they come from this origin, then our web browser will allow us to request thi
 our API and display it on the page.
 If we don't have this, the request can still go to our API server, but it's a browser security feature
 that will prevent us from actually loading the data into our browser. (but what is the point if the request can go to our API without blocking?)
+
+
+FE:
+We're operating in standalone mode, then any components that are used inside another component have to be declared in the imports here.
+example: 
+
+@Component({
+  selector: 'app-root',
+  imports: [RouterOutlet, HeaderComponent],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss'
+})
