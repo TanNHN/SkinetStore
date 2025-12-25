@@ -1,10 +1,4 @@
 <app-header></app-header>
-<div class="container mt-6">
-    <h1 class="text-3xl font-bold underline">HELLO </h1>
-    <ul>
-        aaa
-        @for (item of products(); track item) {
-        <li>{{item.name}}</li>
-        }
-    </ul>
+<div class="container mt-24">
+    <router-outlet></router-outlet>
 </div>

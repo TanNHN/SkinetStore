@@ -1,8 +1,11 @@
+using System.Text.Json;
 using API.Middlewares;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Data.SeedData;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +27,15 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddCors();
 
+builder.Services.AddSingleton<IConnectionMultiplexer>(config =>
+{
+    var connString = builder.Configuration.GetConnectionString("Redis");
+    if(string.IsNullOrEmpty(connString)) throw new Exception("Cannot get Redis connection string");
+    ConfigurationOptions configurations = ConfigurationOptions.Parse(connString, true);
+    return ConnectionMultiplexer.Connect(configurations);
+});
+// BC Redis service is Singleton => tbis cart using redis has to be Singleton
+builder.Services.AddSingleton<ICartService, CartService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

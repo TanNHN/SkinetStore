@@ -1,0 +1,9 @@
+<div class="container mt-5 p-4 bg-gray-100 rounded shadow-lg">
+    <h1 class="text-2xl font-semibold mb-4">Internal Server Error</h1>
+    @if(error()){
+    <h5 class="text-red-600">Error: {{error()?.exceptionMessage}}</h5>
+    <mat-card class="p-4 bg-white">
+        <code class="block whitespace-pre-wrap">{{error()?.detail}}</code>
+    </mat-card>
+    }
+</div>

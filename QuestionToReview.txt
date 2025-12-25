@@ -8,7 +8,8 @@
 6.ProductsController line 20, how type T is automatically recognize as Product without set <Product> to <T>
 7. SelectMany
 8. Products.Select(x => ["Iphone", "Xiaomi"].Contains(x.Type)) does this work as product filter conditions?
-
+9. RSjx?
+10. why multple interceptor
 Note:
 
 BE:
@@ -36,3 +37,13 @@ example:
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
+
+2.
+ @Injectable({
+  providedIn: 'root',
+})
+providedIn: 'root': when our application starts up, it's provided automatically for our entire application.
+Injectable: we can inject wherever we need in prj
+
+3. [(ngModel)]
+Square brackets typically represent input properties, and parentheses typically represent output properties or events

@@ -1,0 +1,18 @@
+<div class="mt-5 flex justify-center gap-4">
+    <button mat-stroked-button (click)="get401()">UnAuthorized</button>
+    <button mat-stroked-button (click)="get400()">Bad Request</button>
+    <button mat-stroked-button (click)="get404()">Not Found</button>
+    <button mat-stroked-button (click)="get400ValidationError()">Validation Error</button>
+    <button mat-stroked-button (click)="get500()">Internal Server Error</button>
+</div>
+
+@if(validationErrors().length > 0){
+<div class="p-4 bg-red-100 mt-3 max-w-lg mx-auto">
+    <ul>
+        @for (validationError of validationErrors(); track $index) {
+        <li class="text-red-600 mb-3 font-semibold">{{validationError}}</li>
+        }
+    </ul>
+</div>
+
+}
