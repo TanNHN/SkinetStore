@@ -1,7 +1,6 @@
 using System.Text.Json;
 using Core.Entities;
 using Core.Interfaces;
-using Microsoft.EntityFrameworkCore.Storage.Json;
 using StackExchange.Redis;
 
 namespace Infrastructure.Services;
