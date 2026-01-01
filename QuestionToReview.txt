@@ -10,6 +10,11 @@
 8. Products.Select(x => ["Iphone", "Xiaomi"].Contains(x.Type)) does this work as product filter conditions?
 9. RSjx?
 10. why multple interceptor
+11. diff between required declared in property and [Required]
+12. When dotnet ef migrartions, it create new migrations file, that file contain only the new entity your created,
+  why it only contain that creation of that new entity not all the entity off the app
+13. Why has separate of the same Address class (Address entity and AddessDTO) 
+
 Note:
 
 BE:
@@ -25,6 +30,10 @@ as they come from this origin, then our web browser will allow us to request thi
 our API and display it on the page.
 If we don't have this, the request can still go to our API server, but it's a browser security feature
 that will prevent us from actually loading the data into our browser. (but what is the point if the request can go to our API without blocking?)
+
+_ ASP Identity use cookies in the request (Cookie: .AspNetCore.Identity.Application=CfDJ8BU-f5dyeyp...) to auth,
+and the http flag inside Cookie prevent js, to access to our cookies. It stay on brower and come with every request
+inside header. And we cant remove cookies from angular app so we can did it in BE side => need logout api 
 
 
 FE:

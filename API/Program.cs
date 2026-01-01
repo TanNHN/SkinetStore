@@ -1,5 +1,6 @@
 using System.Text.Json;
 using API.Middlewares;
+using Core.Entities;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Data.SeedData;
@@ -36,12 +37,17 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(config =>
 });
 // BC Redis service is Singleton => tbis cart using redis has to be Singleton
 builder.Services.AddSingleton<ICartService, CartService>();
+builder.Services.AddAuthorization();
+builder.Services.AddIdentityApiEndpoints<AppUser>().AddEntityFrameworkStores<StoreContext>();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();
-app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200", "https://localhost:4200"));
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:4200", "https://localhost:4200"));
 app.MapControllers();
+app.MapGroup("/api").MapIdentityApi<AppUser>(); // '/api' base route for identity endpoints
 
 //tự tạo db nếu ko có và sau đó gen seed data
 try
