@@ -6,7 +6,6 @@ using Core.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
@@ -30,7 +29,8 @@ public class AccountController(SignInManager<AppUser> signInManager) : BaseAPICo
             {
                 ModelState.AddModelError(error.Code, error.Description);
             }
-            return BadRequest(result.Errors);
+            var errors = result.Errors.Select(e => e.Description).ToArray();
+            return BadRequest(new { errors });
         }
         return Ok();
     }
@@ -63,7 +63,7 @@ public class AccountController(SignInManager<AppUser> signInManager) : BaseAPICo
         });
     }
 
-    [HttpGet]
+    [HttpGet("auth-status")]
     public ActionResult GetAuthState()
     {
         return Ok(new { IsAuthenticated = User.Identity != null && User.Identity.IsAuthenticated });

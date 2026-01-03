@@ -14,7 +14,9 @@
 12. When dotnet ef migrartions, it create new migrations file, that file contain only the new entity your created,
   why it only contain that creation of that new entity not all the entity off the app
 13. Why has separate of the same Address class (Address entity and AddessDTO) 
-
+14. { withCredentials: true }
+15. cookies with HttpOnly flag can't be access to by js, so how do we check if a user is logged in
+16. lastValueFrom()
 Note:
 
 BE:
@@ -56,3 +58,8 @@ Injectable: we can inject wherever we need in prj
 
 3. [(ngModel)]
 Square brackets typically represent input properties, and parentheses typically represent output properties or events
+
+
+TODO:
+
+1. Currently call api user-info after user logged in => return user data when logged in, remove addition api called for user-info

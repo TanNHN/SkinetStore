@@ -25,8 +25,6 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         snackbar.error(err.error.title || err.error);
       }
       if (err.status == 404) {
-        console.log("AAAAAAAAA");
-        
         router.navigateByUrl('/not-found');
       }
       if (err.status == 500) {

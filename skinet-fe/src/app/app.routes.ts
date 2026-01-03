@@ -7,13 +7,19 @@ import { ServerErrorComponent } from './shared/components/server-error/server-er
 import { NotFoundComponent } from './shared/components/not-found/not-found.component';
 import { CartComponent } from './features/cart/cart.component';
 import { CheckoutComponent } from './features/checkout/checkout.component';
+import { LoginComponent } from './features/account/login/login.component';
+import { RegisterComponent } from './features/account/register/register.component';
+import { authGuard } from './core/guard/auth-guard';
+import { checkoutGuard } from './core/guard/checkout-guard';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
     { path: 'shop', component: ShopComponent },
     { path: 'shop/:id', component: ProductDetailComponent },
     { path: 'cart', component: CartComponent },
-    { path: 'checkout', component: CheckoutComponent },
+    { path: 'checkout', component: CheckoutComponent, canActivate: [authGuard, checkoutGuard] },
+    { path: 'account/login', component: LoginComponent },
+    { path: 'account/register', component: RegisterComponent },
     { path: 'error', component: ErrorComponent },
     { path: 'not-found', component: NotFoundComponent },
     { path: 'server-error', component: ServerErrorComponent },

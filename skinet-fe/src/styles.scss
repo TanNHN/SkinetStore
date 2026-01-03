@@ -23,6 +23,12 @@
       supporting-text-color: white));
 }
 
+.snackbar-success {
+  @include mat.snack-bar-overrides((button-color: white,
+      container-color: green,
+      supporting-text-color: white));
+}
+
 .error-icon {
   transform: scale(3);
   @include mat.icon-overrides((color: blue,
