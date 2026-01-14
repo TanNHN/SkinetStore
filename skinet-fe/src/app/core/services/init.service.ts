@@ -10,10 +10,10 @@ export class InitService {
   private cartService = inject(CartService);
   private accountService = inject(AccountService);
 
-  init(){
+  init() {
     const cartId = localStorage.getItem('cart_id');
     const cart$ = cartId ? this.cartService.getCart(cartId) : of(null);
-    
+
     //folk join => allow to wait multiple observables to complete and emit last value to array 
     return forkJoin({
       cart: cart$,

@@ -11,10 +11,10 @@ public static class AddressMappingExtensions
             ? null
             : new AddressDTO
             {
-                StreetAddress = address.StreetAddress,
-                Ward = address.Ward,
-                District = address.District,
-                Province = address.Province,
+                Line1 = address.Line1,
+                Line2 = address.Line2,
+                City = address.City,
+                State = address.State,
                 PostalCode = address.PostalCode,
                 Country = address.Country
             };
@@ -26,10 +26,10 @@ public static class AddressMappingExtensions
             ? null
             : new Address
             {
-                StreetAddress = addressDto.StreetAddress,
-                Ward = addressDto.Ward,
-                District = addressDto.District,
-                Province = addressDto.Province,
+                Line1 = addressDto.Line1,
+                Line2 = addressDto.Line2,
+                City = addressDto.City,
+                State = addressDto.State,
                 PostalCode = addressDto.PostalCode,
                 Country = addressDto.Country
             };
@@ -40,10 +40,10 @@ public static class AddressMappingExtensions
 
         ArgumentNullException.ThrowIfNull(address);
         ArgumentNullException.ThrowIfNull(addressDto);
-        address.StreetAddress = addressDto.StreetAddress;
-        address.Ward = addressDto.Ward;
-        address.District = addressDto.District;
-        address.Province = addressDto.Province;
+        address.Line1 = addressDto.Line1;
+        address.Line2 = addressDto.Line2;
+        address.City = addressDto.City;
+        address.State = addressDto.State;
         address.PostalCode = addressDto.PostalCode;
         address.Country = addressDto.Country;
     }

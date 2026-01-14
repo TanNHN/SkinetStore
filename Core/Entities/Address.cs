@@ -4,10 +4,10 @@ namespace Core.Entities;
 
 public class Address : BaseEntity
 {
-    public required string StreetAddress { get; set; }      // Số nhà, tên đường, hẻm/ngõ
-    public required string Ward { get; set; }              // Phường / Xã / Thị trấn
-    public required string District { get; set; }          // Quận / Huyện / Thị xã / TP thuộc tỉnh
-    public required string Province { get; set; }          // Tỉnh / Thành phố trực thuộc TW
-    public string? PostalCode { get; set; }        // Mã bưu chính (nếu dùng)
-    public required string Country { get; set; } = "Vietnam";  // Quốc gia
+    public required string Line1 { get; set; }    
+    public string? Line2 { get; set; }
+    public required string City { get; set; }
+    public required string State { get; set; }
+    public required string PostalCode { get; set; }
+    public required string Country { get; set; } = "VN";
 }

@@ -19,13 +19,15 @@ export const appConfig: ApplicationConfig = {
         loadingInterceptor,
         authInterceptor
       ])),
+      // Inside provideAppInitializer, if you give it a Observable/Promise, it will wait until the O/P function is resolve 
+      //and then continue process the app (start other component OnInit)
     provideAppInitializer(async () => {
       const initService = inject(InitService);
       // Get cart and user info before the app starts 
 
       // initService.init() is observerble, when use lastValueFrom() => init() start processing and start process other
       // observables inside init() as well.
-      lastValueFrom(initService.init()).finally(() => {
+      return lastValueFrom(initService.init()).finally(() => {
         const splash = document.getElementById('initial-splash');
         if (splash) splash.remove();
       });

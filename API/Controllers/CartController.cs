@@ -1,4 +1,3 @@
-using System;
 using Core.Entities;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -11,8 +10,9 @@ public class CartController(ICartService cartService): BaseAPIController
     public async Task<ActionResult<ShoppingCart>> GetShoppingCart(string id)
     {
          ShoppingCart? cart = await cartService.GetShoppingCartAsync(id);
-         return Ok(cart ?? new ShoppingCart{ID = id});
+         return Ok(cart ?? new ShoppingCart{Id = id});
     }
+
     [HttpPost]
     public async Task<ActionResult<ShoppingCart>> SetShoppingCart([FromBody] ShoppingCart cart)
     {

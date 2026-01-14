@@ -17,6 +17,15 @@
 14. { withCredentials: true }
 15. cookies with HttpOnly flag can't be access to by js, so how do we check if a user is logged in
 16. lastValueFrom()
+17. Khi nào nên dùng add Scope, cho vd
+18. export interface vs export class 
+19. 
+await firstValueFrom(this.stripeService.createOrUpdatePaymentIntent());
+vs
+await this.stripeService.createOrUpdatePaymentIntent();
+are they the same?
+
+20.
 Note:
 
 BE:
@@ -59,6 +68,7 @@ Injectable: we can inject wherever we need in prj
 3. [(ngModel)]
 Square brackets typically represent input properties, and parentheses typically represent output properties or events
 
+4. Dipose service after use. (Stripe service keep value of previous user logged out) 
 
 TODO:
 

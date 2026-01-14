@@ -6,10 +6,10 @@ export interface User {
 }
 
 export interface Address {
-    streetAddress: string;
-    ward: string;
-    district: string;
-    province: string;
+    line1: string;
+    line2: string;
+    city: string;
+    state: string;
     postalCode: string;
     country: string;
 }
