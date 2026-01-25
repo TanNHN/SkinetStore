@@ -7,26 +7,26 @@ using Product = Core.Entities.Product;
 
 namespace Infrastructure.Services;
 
-public class PaymentService(IConfiguration config, ICartService cartService, IGenericRepository<Product> productRepo, IGenericRepository<DeliveryMethod> deliveryMethodRepo) : IPaymentService
+public class PaymentService(IConfiguration config, ICartService cartService, IUnitOfWork unitOfWork) : IPaymentService
 {
     public async Task<ShoppingCart?> CreateOrUpdatePaymentIntent(string cartId)
     {
         StripeConfiguration.ApiKey = config["StripeSettings:SecretKey"];
 
-        ShoppingCart? cart = await cartService.GetShoppingCartAsync(cartId);
+        ShoppingCart? cart = await cartService.GetCartAsync(cartId);
         if (cart == null) return null;
         decimal shippingPrice = 0;
 
         if (cart.DeliveryMethodId.HasValue)
         {
-            DeliveryMethod? deliveryMethod = await deliveryMethodRepo.GetByIDAsync((int)cart.DeliveryMethodId);
+            DeliveryMethod? deliveryMethod = await unitOfWork.Repository<DeliveryMethod>().GetByIDAsync((int)cart.DeliveryMethodId);
             if (deliveryMethod == null) return null;
             shippingPrice = deliveryMethod.Price;
         }
 
         foreach (var item in cart.Items)
         {
-            Product? product = await productRepo.GetByIDAsync(item.ProductId);
+            Product? product = await unitOfWork.Repository<Product>().GetByIDAsync(item.ProductId);
             if (product == null) return null;
             if (item.Price != product.Price)
             {
@@ -58,7 +58,7 @@ public class PaymentService(IConfiguration config, ICartService cartService, IGe
             intent = await paymentIntentService.UpdateAsync(cart.PaymentIntentId, options);
         }
 
-        await cartService.SetShoppingCartAsync(cart);
+        await cartService.SetCartAsync(cart);
         return cart;
     }
 }

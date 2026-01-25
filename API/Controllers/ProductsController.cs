@@ -1,4 +1,3 @@
-using API.RequestHelpers;
 using Core.Entities;
 using Core.Interfaces;
 using Core.Specification;
@@ -8,7 +7,7 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("/api/[controller]")]
-public class ProductsController(IGenericRepository<Product> repo) : BaseAPIController
+public class ProductsController(IUnitOfWork unitOfWork) : BaseAPIController
 {
 
     [HttpGet]
@@ -17,13 +16,13 @@ public class ProductsController(IGenericRepository<Product> repo) : BaseAPIContr
         ISpecification<Product> spec = new ProductSpecification(specParams);
         // How does it know type T is Product
         // Base
-        return await CreatePageResult(repo, spec, specParams.PageIndex, specParams.PageSize);
+        return await CreatePageResult(unitOfWork.Repository<Product>(), spec, specParams.PageIndex, specParams.PageSize);
     }
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<Product>> GetProduct(int id)
     {
-        Product? product = await repo.GetByIDAsync(id);
+        Product? product = await unitOfWork.Repository<Product>().GetByIDAsync(id);
         if (product == null)
         {
             return NotFound();
@@ -34,8 +33,8 @@ public class ProductsController(IGenericRepository<Product> repo) : BaseAPIContr
     [HttpPost]
     public async Task<ActionResult<Product>> CreateProduct(Product product)
     {
-        repo.Add(product);
-        if (await repo.SaveAllAsync())
+        unitOfWork.Repository<Product>().Add(product);
+        if (await unitOfWork.Complete())
         {
             return CreatedAtAction("GetProduct", new { id = product.Id }, product);
         }
@@ -47,8 +46,8 @@ public class ProductsController(IGenericRepository<Product> repo) : BaseAPIContr
     {
         if (!IsProductExist(id) && product.Id != id)
             return BadRequest();
-        repo.Update(product);
-        if (await repo.SaveAllAsync())
+        unitOfWork.Repository<Product>().Update(product);
+        if (await unitOfWork.Complete())
         {
             return NoContent();
         }
@@ -58,11 +57,11 @@ public class ProductsController(IGenericRepository<Product> repo) : BaseAPIContr
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteProduct(int id)
     {
-        Product? product = await repo.GetByIDAsync(id);
+        Product? product = await unitOfWork.Repository<Product>().GetByIDAsync(id);
         if (product == null)
             return BadRequest();
-        repo.Remove(product);
-        if (await repo.SaveAllAsync())
+        unitOfWork.Repository<Product>().Remove(product);
+        if (await unitOfWork.Complete())
         {
             return NoContent();
         }
@@ -72,17 +71,17 @@ public class ProductsController(IGenericRepository<Product> repo) : BaseAPIContr
     public async Task<ActionResult<IReadOnlyList<string>>> GetBrands(int id)
     {
         BrandListSpecification spec = new();
-        return Ok(await repo.ListAsync(spec));
+        return Ok(await unitOfWork.Repository<Product>().ListAsync(spec));
     }
     [HttpGet("types")]
     public async Task<ActionResult<IReadOnlyList<string>>> GetTypes(int id)
     {
         TypeListSpecification spec = new();
-        return Ok(await repo.ListAsync(spec));
+        return Ok(await unitOfWork.Repository<Product>().ListAsync(spec));
     }
 
     private bool IsProductExist(int id)
     {
-        return repo.Exists(id);
+        return unitOfWork.Repository<Product>().Exists(id);
     }
 }

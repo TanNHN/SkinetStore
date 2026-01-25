@@ -24,6 +24,20 @@ public class BaseSpecification<T>(Expression<Func<T, bool>>? criteria) : ISpecif
 
     public bool IsPaginationEnable { get; private set; }
 
+    public List<Expression<Func<T, object>>> Includes { get; } = [];
+
+    public List<string> IncludeStrings { get; } = [];
+
+    public void AddInclude(Expression<Func<T, object>> expression)
+    {
+        Includes.Add(expression);
+    }
+
+    public void AddInclude(string IncludeString)
+    {
+        IncludeStrings.Add(IncludeString);
+    }
+
     public void AddOrderBy(Expression<Func<T, object>> expression)
     {
         OrderBy = expression;
@@ -32,7 +46,7 @@ public class BaseSpecification<T>(Expression<Func<T, bool>>? criteria) : ISpecif
     {
         OrderByDesc = expression;
     }
-
+    //Use for method like Count, cuz we only want to filter by criteria, not paging here 
     public IQueryable<T> ApplyCriteria(IQueryable<T> query)
     {
         if (Criteria != null)

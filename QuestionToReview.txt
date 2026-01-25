@@ -25,9 +25,34 @@ vs
 await this.stripeService.createOrUpdatePaymentIntent();
 are they the same?
 
-20.
+20. public ShippingAddress ShippingAddress { get; set; } = null!;
+21. builder.Property(x => x.Status).HasConversion(
+    o => o.ToString(),
+    o => (OrderStatus) Enum.Parse(typeof(OrderStatus), o)
+);
+
+22. Conventions concept in create migration inside ef core
 Note:
 
+23. Without any attributes or Fluent API, what relationship will 
+EF Core set up between User and Order (1–1, 1–many, many–many), 
+and which is the principal and which is the dependent?
+
+24. Shadow key
+
+25. ActionResult vs IActionResult 
+26. public static OrderItemDTO ToDTO(this OrderItem orderItem) extension method
+27.
+public async Task<ActionResult<IEnumerable<OrderDTO>>> GetOrdersByUserId()
+    {
+        OrderSpecification spec = new(User.GetEmail());
+        IReadOnlyList<Order> orders = await unitOfWork.Repository<Order>().ListAsync(spec);
+        IEnumerable<OrderDTO> orderToReturn = orders.Select(o => o.ToDTO());
+        return orderToReturn;
+    }
+Why cant implicit cast Ok(orderToReturn)? type of orderToReturn already match with T in ActionResult<T>
+
+28. Why devide into 3 prjs API, Core, Infrastrucure
 BE:
 _ Cross-origin resource sharing, which is a security feature 
 implemented by web browsers to control how resources on a web page can be requested
@@ -46,6 +71,14 @@ _ ASP Identity use cookies in the request (Cookie: .AspNetCore.Identity.Applicat
 and the http flag inside Cookie prevent js, to access to our cookies. It stay on brower and come with every request
 inside header. And we cant remove cookies from angular app so we can did it in BE side => need logout api 
 
+_ with dependency injection, if we're injecting something into something that's
+a service, then it has to be the same scope as the thing we're injecting.
+
+_ dùng AddScope cho tác vụ như connect với db, 1 request sẽ chỉ tạo 1 connection tới db, tồn tại trong suốt
+vòng đời của request đó, nên ta sẽ ko muốn tạo quá nhiều connection mà chỉ cần 1 và tất cả tác vụ sẽ dùng lại connection đó,
+nếu đăng ký = singleton => xác suất lỗi cao do sẽ dc dùng chung bởi nhiều đồng thời reqeust, thread khác nhau 
+
+_ Docker: https://youtu.be/3c-iBn73dDE
 
 FE:
 We're operating in standalone mode, then any components that are used inside another component have to be declared in the imports here.

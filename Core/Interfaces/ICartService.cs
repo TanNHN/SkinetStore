@@ -5,8 +5,8 @@ namespace Core.Interfaces;
 
 public interface ICartService
 {
-    Task<ShoppingCart?> GetShoppingCartAsync(string key);
-    Task<ShoppingCart?> SetShoppingCartAsync(ShoppingCart cart);
-    Task<bool> DeleteShoppingCartAsync(string key);
+    Task<ShoppingCart?> GetCartAsync(string key);
+    Task<ShoppingCart?> SetCartAsync(ShoppingCart cart);
+    Task<bool> DeleteCartAsync(string key);
 
 }
