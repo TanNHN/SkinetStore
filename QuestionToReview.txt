@@ -53,6 +53,18 @@ public async Task<ActionResult<IEnumerable<OrderDTO>>> GetOrdersByUserId()
 Why cant implicit cast Ok(orderToReturn)? type of orderToReturn already match with T in ActionResult<T>
 
 28. Why devide into 3 prjs API, Core, Infrastrucure
+29. Aggregate, Owned entities
+30. [HttpGet("{id:int}")]
+    public async Task<ActionResult<OrderDTO>> GetOrderById(int id)
+
+    vs
+
+    [HttpGet]
+    public async Task<ActionResult<OrderDTO>> GetOrderById(int id)
+31. Why UnitOfWork set as a scope service, but still use ConcurrentDictionary 
+32. Hub vs Controller (Message-driven vs request-driven)
+for thread safe, 1 request only access to 1 instance of UOW, why borther using ConcurrentDictionary 
+
 BE:
 _ Cross-origin resource sharing, which is a security feature 
 implemented by web browsers to control how resources on a web page can be requested
@@ -80,6 +92,18 @@ nếu đăng ký = singleton => xác suất lỗi cao do sẽ dc dùng chung b�
 
 _ Docker: https://youtu.be/3c-iBn73dDE
 
+_ Step create Stripe payment:
+  1. Create payment intent with API
+  2. API send payment intent to Stripe
+  3. Stripe create payment intent => return payment intent id + secret 
+  4. API return secret to client
+  5. Client send payment to Stripe using client secret
+  6. Stripe send confirmation to client that payment was successful
+  7. Client call api and create order
+  8. Stripe sends confirmation to API that payment was successful
+  9. Payment confirmed and can start shipping progress
+
+
 FE:
 We're operating in standalone mode, then any components that are used inside another component have to be declared in the imports here.
 example: 
@@ -102,6 +126,8 @@ Injectable: we can inject wherever we need in prj
 Square brackets typically represent input properties, and parentheses typically represent output properties or events
 
 4. Dipose service after use. (Stripe service keep value of previous user logged out) 
+
+5.grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ← combo thần thánh
 
 TODO:
 

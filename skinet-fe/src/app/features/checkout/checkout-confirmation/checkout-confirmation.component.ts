@@ -1,16 +1,16 @@
-import { Component, inject, Input } from '@angular/core';
-import { CartService } from '../../../core/services/cart.service';
 import { CurrencyPipe } from '@angular/common';
+import { Component, inject, Input } from '@angular/core';
 import { ConfirmationToken } from '@stripe/stripe-js';
+import { CartService } from '../../../core/services/cart.service';
 import { AddressPipe } from "../../../shared/pipes/address-pipe";
-import { PaymentPipe } from "../../../shared/pipes/payment-pipe";
+import { PaymentCardPipe } from "../../../shared/pipes/payment-pipe";
 
 @Component({
   selector: 'app-checkout-confirmation',
   imports: [
     CurrencyPipe,
     AddressPipe,
-    PaymentPipe
+    PaymentCardPipe
 ],
   templateUrl: './checkout-confirmation.component.html',
   styleUrl: './checkout-confirmation.component.scss'

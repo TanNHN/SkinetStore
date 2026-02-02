@@ -65,7 +65,7 @@ public class OrdersController(ICartService cartService, IUnitOfWork unitOfWork) 
         OrderSpecification spec = new(User.GetEmail());
         IReadOnlyList<Order> orders = await unitOfWork.Repository<Order>().ListAsync(spec);
         IReadOnlyList<OrderDTO> orderToReturn = orders.Select(o => o.ToDTO()).ToList();
-        //C# doesn't support implicit cast operators on interfaces. So we has to wrap Ok() by oursef
+        //C# doesn't support implicit cast operators on interfaces. So we has to wrap Ok() by ourself
         return Ok(orderToReturn);
     }
 

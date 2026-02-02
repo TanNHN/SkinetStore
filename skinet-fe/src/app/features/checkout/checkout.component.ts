@@ -1,20 +1,22 @@
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
+import { CurrencyPipe, JsonPipe } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { MatStepper, MatStepperModule } from '@angular/material/stepper';
-import { OrderSummaryComponent } from '../../shared/components/order-summary/order-summary.component';
-import { Router, RouterLink } from "@angular/router";
-import { StripeService } from '../../core/services/stripe.service';
-import { ConfirmationToken, StripeAddressElement, StripeAddressElementChangeEvent, StripePaymentElement, StripePaymentElementChangeEvent } from '@stripe/stripe-js';
-import { SnackbarService } from '../../core/services/snackbar.service';
 import { MatButton } from '@angular/material/button';
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
-import { StepperSelectionEvent } from '@angular/cdk/stepper';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatStepper, MatStepperModule } from '@angular/material/stepper';
+import { Router, RouterLink } from "@angular/router";
+import { ConfirmationToken, StripeAddressElement, StripeAddressElementChangeEvent, StripePaymentElement, StripePaymentElementChangeEvent } from '@stripe/stripe-js';
 import { firstValueFrom } from 'rxjs';
 import { AccountService } from '../../core/services/account.service';
-import { CheckoutDeliveryComponent } from "./checkout-delivery/checkout-delivery.component";
-import { CheckoutConfirmationComponent } from "./checkout-confirmation/checkout-confirmation.component";
 import { CartService } from '../../core/services/cart.service';
-import { CurrencyPipe, JsonPipe } from '@angular/common';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { OrderService } from '../../core/services/order.service';
+import { SnackbarService } from '../../core/services/snackbar.service';
+import { StripeService } from '../../core/services/stripe.service';
+import { OrderSummaryComponent } from '../../shared/components/order-summary/order-summary.component';
+import { OrderToCreate } from '../../shared/models/order';
+import { CheckoutConfirmationComponent } from "./checkout-confirmation/checkout-confirmation.component";
+import { CheckoutDeliveryComponent } from "./checkout-delivery/checkout-delivery.component";
 
 @Component({
   selector: 'app-checkout',
@@ -49,7 +51,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   private routerService = inject(Router);
   confirmationToken = signal<ConfirmationToken | undefined>(undefined);
   isLoadding = signal(false);
-
+  private orderService = inject(OrderService);
   async ngOnInit() {
     try {
       this.addressElement = await this.stripeService.createAddressElement();
@@ -112,6 +114,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     const address = result?.value.address;
     if (address) {
       return {
+        name: result.value.name,
         line1: address.line1 || '',
         line2: address.line2 || '',
         city: address.city || '',
@@ -142,10 +145,22 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     try {
       if (this.confirmationToken()) {
         const result = await this.stripeService.confirmToken(this.confirmationToken());
-        if (result.error) throw new Error(result.error.message);
-        this.cartService.deleteCart();
-        this.cartService.deliveryMethod.set(null);
-        this.routerService.navigateByUrl('checkout-success');
+        if (result.paymentIntent?.status == 'succeeded') {
+          const order: OrderToCreate = await this.createOrderModel();
+          const orderResult = await firstValueFrom(this.orderService.createOrder(order));
+          if (orderResult) {
+            this.cartService.deleteCart();
+            this.cartService.deliveryMethod.set(null);
+            this.orderService.orderComplete.set(true);
+            this.routerService.navigateByUrl('checkout/success');
+          } else {
+            throw new Error('Order created failed')
+          }
+        } else if (result.error) {
+          throw new Error(result.error.message);
+        } else {
+          throw new Error('Unexpected response from Stripe')
+        }
       }
     } catch (error: any) {
       this.snackBar.error(error.message || 'Confirm payment error');
@@ -154,4 +169,26 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       this.isLoadding.set(false);
     }
   }
+
+  async createOrderModel(): Promise<OrderToCreate> {
+    const cart = this.cartService.cart();
+    const shippingAddress = await this.getAddressFromTripeAddress();
+    const card = this.confirmationToken()?.payment_method_preview.card;
+    if (!cart?.id || !cart?.deliveryMethodId || !shippingAddress || !card) {
+      throw new Error('Problem when creating order');
+    }
+
+    return {
+      cartId: cart.id,
+      deliveryMethodId: cart.deliveryMethodId,
+      shippingAddress: shippingAddress,
+      paymentSummary: {
+        brand: card.brand,
+        expMonth: card.exp_month,
+        expYear: card.exp_year,
+        last4: Number(card.last4)
+      }
+    }
+  }
+
 }

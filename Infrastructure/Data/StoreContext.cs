@@ -17,9 +17,12 @@ public class StoreContext(DbContextOptions options) : IdentityDbContext<AppUser>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ProductConfig).Assembly);
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(DeliveryMethodConfiguration).Assembly);
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(OrderConfiguration).Assembly);
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(OrderItemConfiguration).Assembly);
+        // typeof(ProductConfiguration).Assembly => IEntityTypeConfiguration apply for all classes implement this method
+        // not for ProductConfiguration itself, so need to define the other classConfiguration
+        // eg: 
+        // modelBuilder.ApplyConfigurationsFromAssembly(typeof(DeliveryMethodConfiguration).Assembly);
+        // modelBuilder.ApplyConfigurationsFromAssembly(typeof(OrderConfiguration).Assembly);
+        // modelBuilder.ApplyConfigurationsFromAssembly(typeof(OrderItemConfiguration).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ProductConfiguration).Assembly);
     }
 }

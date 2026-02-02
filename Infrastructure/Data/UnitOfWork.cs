@@ -4,11 +4,14 @@ using Core.Interfaces;
 
 namespace Infrastructure.Data.SeedData;
 
+// 1 StoreContext for all repository.
 public class UnitOfWork(StoreContext context) : IUnitOfWork
 {
+    // ConcurrentDictionary prevent race condition when multiple thread access UOW
     private readonly ConcurrentDictionary<string, object> _repositories = [];
     public async Task<bool> Complete()
     {
+        // .SaveChangeAsync = 1 transaction
         return await context.SaveChangesAsync() > 0;
     }
 
