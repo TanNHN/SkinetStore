@@ -43,7 +43,7 @@ IHubContext<NotificationHub> hubContext) : BaseAPIController
             {
                 return BadRequest("Invalid event data");
             }
-            await HandlePaymentIntentSucceeded(intent);
+            await CheckPaymentIntentResult(intent);
             return Ok();
         }
         catch (StripeException ex)
@@ -58,7 +58,7 @@ IHubContext<NotificationHub> hubContext) : BaseAPIController
         }
     }
 
-    private async Task HandlePaymentIntentSucceeded(PaymentIntent intent)
+    private async Task CheckPaymentIntentResult(PaymentIntent intent)
     {
         if (intent.Status == "succeeded")
         {

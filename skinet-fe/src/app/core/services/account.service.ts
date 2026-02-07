@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { map, tap } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
@@ -15,10 +15,8 @@ export class AccountService {
   signalr = inject(SignalrService);
 
   login(value: any) {
-    let param = new HttpParams();
-    param = param.append('useCookies', true);
-    return this.http.post<User>(this.baseUrl + 'login', value, { params: param }).pipe(
-      tap(user => this.signalr.createHubConnection())
+    return this.http.post<{accessToken: string}>(this.baseUrl + 'authentication/login', value).pipe(
+      tap(_ => this.signalr.createHubConnection())
     );
   }
 

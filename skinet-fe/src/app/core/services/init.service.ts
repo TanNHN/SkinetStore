@@ -22,10 +22,6 @@ export class InitService {
       firstName: 'anon',
       lastName: 'anon'
     }
-    return of({
-      cart: null,
-      user: user
-    })
     //folk join => allow to wait multiple observables to complete and emit last value to array 
     return forkJoin({
       cart: cart$,

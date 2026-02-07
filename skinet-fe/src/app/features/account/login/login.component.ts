@@ -4,8 +4,8 @@ import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatInput } from '@angular/material/input';
 import { MatFormField, MatLabel } from '@angular/material/select';
-import { AccountService } from '../../../core/services/account.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AccountService } from '../../../core/services/account.service';
 
 @Component({
   selector: 'app-login',
@@ -39,8 +39,9 @@ export class LoginComponent {
 
   onSubmit() {
     this.accountService.login(this.loginForm.value).subscribe({
-      next: () => {
+      next: data => {
         this.accountService.getUserInfo().subscribe();
+        localStorage.setItem('AccessToken', data.accessToken);
         this.router.navigateByUrl(this.returnUrl);
       },
       error: (error) => {

@@ -12,9 +12,7 @@ export class SignalrService {
   order = signal<Order | null>(null);
 
   createHubConnection() {
-    this.hubConnection = new HubConnectionBuilder().withUrl(this.hubUrl, {
-      withCredentials: true
-    }).withAutomaticReconnect().build();
+    this.hubConnection = new HubConnectionBuilder().withUrl(this.hubUrl).withAutomaticReconnect().build();
 
     this.hubConnection.start().catch(
       error => console.error(error)

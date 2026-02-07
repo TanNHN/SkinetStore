@@ -1,4 +1,4 @@
-using System.Text.Json;
+using System.Text;
 using API.Middlewares;
 using API.SignalR;
 using Core.Entities;
@@ -6,7 +6,9 @@ using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Data.SeedData;
 using Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,7 +34,7 @@ builder.Services.AddCors();
 builder.Services.AddSingleton<IConnectionMultiplexer>(config =>
 {
     var connString = builder.Configuration.GetConnectionString("Redis");
-    if(string.IsNullOrEmpty(connString)) throw new Exception("Cannot get Redis connection string");
+    if (string.IsNullOrEmpty(connString)) throw new Exception("Cannot get Redis connection string");
     ConfigurationOptions configurations = ConfigurationOptions.Parse(connString, true);
     return ConnectionMultiplexer.Connect(configurations);
 });
@@ -40,6 +42,20 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(config =>
 builder.Services.AddSingleton<ICartService, CartService>();
 builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<AppUser>().AddEntityFrameworkStores<StoreContext>();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new()
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = "https://localhost:5001",
+            ValidAudience = "https://localhost:4200",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"] ?? ""))
+        };
+    });
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 //add SignalR to DI
