@@ -6,6 +6,7 @@ import { MatInput } from '@angular/material/input';
 import { MatFormField, MatLabel } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AccountService } from '../../../core/services/account.service';
+import { CartService } from '../../../core/services/cart.service';
 
 @Component({
   selector: 'app-login',
@@ -25,11 +26,12 @@ export class LoginComponent {
   private accountService = inject(AccountService);
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
+  private cartService = inject(CartService);
   returnUrl: string = '/shop';
 
   constructor() {
     const returnUrl = this.activatedRoute.snapshot.queryParams['returnUrl'];
-    if (returnUrl) this.returnUrl = returnUrl;    
+    if (returnUrl) this.returnUrl = returnUrl;
   }
 
   loginForm = this.fb.group({
@@ -42,6 +44,9 @@ export class LoginComponent {
       next: data => {
         this.accountService.getUserInfo().subscribe();
         localStorage.setItem('AccessToken', data.accessToken);
+        this.accountService.getUserInfo().subscribe();
+        const cartId = localStorage.getItem('cart_id');
+        if(cartId) this.cartService.getCart(cartId).subscribe();
         this.router.navigateByUrl(this.returnUrl);
       },
       error: (error) => {

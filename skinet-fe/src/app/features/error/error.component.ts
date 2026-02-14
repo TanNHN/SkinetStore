@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { MatAnchor } from "@angular/material/button";
+import { environment } from '../../../environments/environment.development';
 
 @Component({
   selector: 'app-error',
@@ -9,7 +10,7 @@ import { MatAnchor } from "@angular/material/button";
   styleUrl: './error.component.scss',
 })
 export class ErrorComponent {
-  baseUrl = "https://localhost:5001/api/buggy/";
+  baseUrl = environment.apiUrl;
   private http = inject(HttpClient);
   validationErrors = signal([]); 
   get404() {

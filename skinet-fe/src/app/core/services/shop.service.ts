@@ -1,7 +1,8 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment.development';
 import { Pagination } from '../../shared/models/pagination';
 import { Product } from '../../shared/models/product';
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { ShopParam } from '../../shared/models/shopParam';
 
 @Injectable({
@@ -9,7 +10,7 @@ import { ShopParam } from '../../shared/models/shopParam';
 })
 export class ShopService {
   private http = inject(HttpClient);
-  baseURL = 'https://localhost:5001/api/';
+  baseURL = environment.apiUrl;
   types: string[] = [];
   brands: string[] = [];
 

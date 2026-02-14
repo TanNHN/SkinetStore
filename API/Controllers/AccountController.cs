@@ -1,4 +1,5 @@
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using API.DTOs;
 using API.Extensions;
@@ -39,11 +40,9 @@ public class AccountController(SignInManager<AppUser> signInManager) : BaseAPICo
     [HttpPost("logout")]
     public async Task<ActionResult> Logout()
     {
-        //does include remove auth cookie in browser as well 
-        await signInManager.SignOutAsync();
         return NoContent();
     }
-    
+
     [HttpGet("user-info")]
     public async Task<ActionResult<AppUser>> GetUserInfo()
     {
