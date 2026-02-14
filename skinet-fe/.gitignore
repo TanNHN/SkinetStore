@@ -5,7 +5,8 @@
 /tmp
 /out-tsc
 /bazel-out
-appsettings.json
+**/appsettings*.json
+
 # Node
 /node_modules
 npm-debug.log

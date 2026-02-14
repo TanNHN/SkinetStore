@@ -1,10 +1,10 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
-import { environment } from '../../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { firstValueFrom, map, tap } from 'rxjs';
+import { environment } from '../../../environments/environment.development';
 import { Cart, CartItem } from '../../shared/models/cart';
-import { Product } from '../../shared/models/product';
-import { isEmpty, map } from 'rxjs';
 import { DeliveryMethod } from '../../shared/models/deliveryMethod';
+import { Product } from '../../shared/models/product';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +12,7 @@ import { DeliveryMethod } from '../../shared/models/deliveryMethod';
 export class CartService {
   baseUrl = environment.apiUrl;
   private http = inject(HttpClient)
-  
+
   cart = signal<Cart | null>(null);
   deliveryMethod = signal<DeliveryMethod | null>(null);
 
@@ -28,7 +28,7 @@ export class CartService {
       total: subTotal! - discount + shipping
     }
   });
-  
+
   itemCount = computed(() => {
     // reduce((prev, current))
     return this.cart()?.items.reduce((sum, item) => sum + item.quantity, 0);
@@ -44,22 +44,24 @@ export class CartService {
   }
 
   setCart(cart: Cart) {
-    return this.http.post<Cart>(`${this.baseUrl}cart`, cart).subscribe({
-      next: result => this.cart.set(result)
-    });
+    return this.http.post<Cart>(`${this.baseUrl}cart`, cart).pipe(
+      tap(cart => {
+        this.cart.set(cart);
+      })
+    )
   }
 
   //CartItem has similar prop as Product but for Product ID in CartItem is ProductID and Product is ID
-  addItemToCart(item: CartItem | Product, quantity = 1) {
+  async addItemToCart(item: CartItem | Product, quantity = 1) {
     const cart = this.cart() ?? this.createCart();
     if (this.isProduct(item)) {
       item = this.mapProductToCartItem(item);
     }
     cart.items = this.addOrUpdateItem(cart.items, item, quantity);
-    this.setCart(cart)
+    await firstValueFrom(this.setCart(cart));
   }
 
-  removeItemFromCart(productID: number, quantity = 1) {
+  async removeItemFromCart(productID: number, quantity = 1) {
     const cart = this.cart();
     if (!cart) return;
     const index = cart.items.findIndex(x => x.productId === productID);
@@ -75,18 +77,19 @@ export class CartService {
       if (cart.items.length === 0) {
         this.deleteCart();
       } else {
-        this.setCart(cart);
+        await firstValueFrom(this.setCart(cart));
       }
     }
   }
 
   deleteCart() {
-    this.http.delete(this.baseUrl + 'cart?id=' + this.cart()?.id).subscribe({
-      next: () => {
-        localStorage.removeItem('cart_id');
-        this.cart.set(null)
-      }
-    });
+    this.http.delete(this.baseUrl + 'cart?id=' + this.cart()?.id)
+      .subscribe({
+        next: () => {
+          localStorage.removeItem('cart_id');
+          this.cart.set(null)
+        }
+      });
   }
 
   private addOrUpdateItem(items: CartItem[], item: CartItem, quantity: number): CartItem[] {

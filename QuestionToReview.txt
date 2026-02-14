@@ -7,7 +7,7 @@
         (string.IsNullOrEmpty(type) || x.Type == type))
 6.ProductsController line 20, how type T is automatically recognize as Product without set <Product> to <T>
 7. SelectMany
-8. Products.Select(x => ["Iphone", "Xiaomi"].Contains(x.Type)) does this work as product filter conditions?
+8. Products.Select(x => ["Iphone", "Xiaomi"].Contains(x.Type)) does this work as product filter conditions? Yes, ofc
 9. RSjx?
 10. why multple interceptor
 11. diff between required declared in property and [Required]
@@ -64,6 +64,7 @@ Why cant implicit cast Ok(orderToReturn)? type of orderToReturn already match wi
 31. Why UnitOfWork set as a scope service, but still use ConcurrentDictionary 
 32. Hub vs Controller (Message-driven vs request-driven)
 for thread safe, 1 request only access to 1 instance of UOW, why borther using ConcurrentDictionary 
+33. subcribe(ur observable) vs await firstValueFrom(ur observable)
 
 BE:
 _ Cross-origin resource sharing, which is a security feature 
@@ -127,7 +128,7 @@ Square brackets typically represent input properties, and parentheses typically 
 
 4. Dipose service after use. (Stripe service keep value of previous user logged out) 
 
-5.grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ← combo thần thánh
+5. combo: grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 
 
 TODO:
 

@@ -1,8 +1,9 @@
-import { Component, inject, OnInit, output } from '@angular/core';
-import { CheckoutService } from '../../../core/services/checkout.service';
-import { MatRadioModule } from '@angular/material/radio';
 import { CurrencyPipe } from '@angular/common';
+import { Component, inject, OnInit, output } from '@angular/core';
+import { MatRadioModule } from '@angular/material/radio';
+import { firstValueFrom } from 'rxjs';
 import { CartService } from '../../../core/services/cart.service';
+import { CheckoutService } from '../../../core/services/checkout.service';
 import { DeliveryMethod } from '../../../shared/models/deliveryMethod';
 
 @Component({
@@ -35,12 +36,12 @@ export class CheckoutDeliveryComponent implements OnInit {
     );
   }
 
-  upgradeDeliveryMethod(method: DeliveryMethod) {
+  async upgradeDeliveryMethod(method: DeliveryMethod) {
     this.cartService.deliveryMethod.set(method);
     const cart = this.cartService.cart();
     if (cart) {
       cart.deliveryMethodId = method.id;
-      this.cartService.setCart(cart);
+      await firstValueFrom(this.cartService.setCart(cart));
       this.deliveryComplete.emit(true);
     }
   }

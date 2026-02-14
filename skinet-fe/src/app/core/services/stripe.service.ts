@@ -1,12 +1,11 @@
-import { inject, Injectable } from '@angular/core';
-import { firstValueFrom, map, Observable } from 'rxjs';
-import { ConfirmationToken, loadStripe, Stripe, StripeAddressElement, StripeAddressElementOptions, StripeElements, StripePaymentElement } from '@stripe/stripe-js';
-import { environment } from '../../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
-import { CartService } from './cart.service';
+import { inject, Injectable } from '@angular/core';
+import { ConfirmationToken, loadStripe, Stripe, StripeAddressElement, StripeAddressElementOptions, StripeElements, StripePaymentElement } from '@stripe/stripe-js';
+import { firstValueFrom, map } from 'rxjs';
+import { environment } from '../../../environments/environment.development';
 import { Cart } from '../../shared/models/cart';
 import { AccountService } from './account.service';
-import { MatStepper } from '@angular/material/stepper';
+import { CartService } from './cart.service';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +32,7 @@ export class StripeService {
     if (!this.elements) {
       const stripe = await this.getStripe();
       if (!stripe) throw new Error('Stripe failed to load.');
-      const cart = await firstValueFrom(this.createOrUpdatePaymentIntent());
+      const cart = await firstValueFrom(await this.createOrUpdatePaymentIntent());
       this.elements = stripe.elements({ clientSecret: cart.clientSecret, appearance: { labels: 'floating' } });
     }
     return this.elements;
@@ -82,12 +81,12 @@ export class StripeService {
     return this.paymentElement;
   }
 
-  createOrUpdatePaymentIntent() {
+  async createOrUpdatePaymentIntent() {
     const cart = this.cartService.cart();
     if (!cart) throw new Error('Problem with Cart');
     return this.http.post<Cart>(`${environment.apiUrl}payment/${cart.id}`, {}).pipe(
       map(cart => {
-        this.cartService.setCart(cart);
+        firstValueFrom(this.cartService.setCart(cart));
         //when calling this function we can set the cart and also get the cart data
         return cart;
       })
