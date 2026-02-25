@@ -11,6 +11,8 @@ export interface Order {
   total: number
   status: string
   paymentIntentId: string
+  couponId: string
+  totalDiscount: number
 }
 
 export interface ShippingAddress {

@@ -4,13 +4,14 @@ using Core.Entities;
 using Core.Entities.OrdersAggregate;
 using Core.Interfaces;
 using Core.Specification;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [Authorize]
-public class OrdersController(ICartService cartService, IUnitOfWork unitOfWork) : BaseAPIController
+public class OrdersController(ICartService cartService, IUnitOfWork unitOfWork, ICouponService couponService) : BaseAPIController
 {
     [HttpPost]
     public async Task<ActionResult<Order>> CreateOrder(CreateOrderDTO orderDTO)
@@ -40,16 +41,18 @@ public class OrdersController(ICartService cartService, IUnitOfWork unitOfWork) 
 
         DeliveryMethod? deliveryMethod = await unitOfWork.Repository<DeliveryMethod>().GetByIDAsync(cart.DeliveryMethodId ?? -1);
         if(deliveryMethod == null) return BadRequest("Delivery method not found");
-        
+        decimal subTotal = orderItems.Sum(i => i.Price * i.Quantity);
         Order order = new()
         {
             OrderItems = orderItems,
             DeliveryMethod = deliveryMethod,
             ShippingAddress = orderDTO.ShippingAddress,
-            SubTotal = orderItems.Sum(i => i.Price * i.Quantity),
+            SubTotal = subTotal,
             PaymentSummary = orderDTO.PaymentSummary,
             PaymentIntentId = cart.PaymentIntentId,
-            BuyerEmail = User.GetEmail()
+            BuyerEmail = User.GetEmail(),
+            CouponId = cart.Coupon?.Id ?? "",
+            TotalDiscount = cart.Coupon != null ? couponService.GetDiscountAmount(cart.Coupon, subTotal) : 0
         };
         unitOfWork.Repository<Order>().Add(order);
         if (await unitOfWork.Complete())

@@ -26,21 +26,25 @@
       <button routerLink="/checkout" mat-flat-button>Checkout</button>
       <button routerLink="/shop" mat-button>Continue Shopping</button>
     </div>
-    } @else {
-      
     }
-
   </div>
 
   <div class="space-y-4 rounded-lg border border-gray-200 bg-white shadow-sm">
-    <form class="space-y-2 flex flex-col p-2">
+    <form class="space-y-2 flex flex-col p-2" [formGroup]="voucherForm">
       <label class="mb-2 block text-sm font-medium">Do you have a voucher code?</label>
       <mat-form-field appearance="outline">
         <mat-label>Voucher code</mat-label>
-        <input matInput type="text">
+        <input matInput type="text" formControlName="VoucherCode">
       </mat-form-field>
-
-      <button mat-flat-button>Apply code</button>
+      @if(cartService.cart()?.coupon) {
+      <div class="flex justify-between items-center">
+        <p class="font-bold">{{cartService.cart()?.coupon?.name}} applied</p>
+        <button (click)="removeVoucher()" class="text-red-700 hover:cursor-pointer">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+      }
+      <button mat-flat-button (click)="getVoucher()" [disabled]="isDisableVoucherInput()">Apply code</button>
     </form>
   </div>
 

@@ -22,7 +22,9 @@ public static class OrderMappingExtension
             Status = order.Status.ToString(),
             PaymentIntentId = order.PaymentIntentId,
             PaymentSummary = order.PaymentSummary,
-            ShippingAddress = order.ShippingAddress
+            ShippingAddress = order.ShippingAddress,
+            TotalDiscount = order.TotalDiscount,
+            CouponId = order.CouponId
         };
     }
 
@@ -34,7 +36,7 @@ public static class OrderMappingExtension
             PictureUrl = orderItem.ItemOrdered.PictureUrl,
             ProductName = orderItem.ItemOrdered.Name,
             Price = orderItem.Price,
-            Quantity = orderItem.Quantity
+            Quantity = orderItem.Quantity,
         };
     }
 }

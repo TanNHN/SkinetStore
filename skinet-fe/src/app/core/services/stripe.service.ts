@@ -81,7 +81,7 @@ export class StripeService {
     return this.paymentElement;
   }
 
-  async createOrUpdatePaymentIntent() {
+  createOrUpdatePaymentIntent() {
     const cart = this.cartService.cart();
     if (!cart) throw new Error('Problem with Cart');
     return this.http.post<Cart>(`${environment.apiUrl}payment/${cart.id}`, {}).pipe(

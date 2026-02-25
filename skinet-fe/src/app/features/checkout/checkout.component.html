@@ -30,8 +30,8 @@
                 <app-checkout-confirmation [confirmationToken]="confirmationToken()"></app-checkout-confirmation>
                 <div class="flex justify-between mt-6">
                     <button matStepperPrevious mat-stroked-button>Back</button>
-                    <button [disabled]="isLoadding()  || !confirmationToken()" (click)="confirmPayment(stepper)" mat-flat-button>
-                        @if(isLoadding()){
+                    <button [disabled]="isLoading()  || !confirmationToken()" (click)="confirmPayment(stepper)" mat-flat-button>
+                        @if(isLoading()){
                         <mat-spinner diameter="20"></mat-spinner>
                         }@else{
                         Pay {{this.cartService.totals()?.total |

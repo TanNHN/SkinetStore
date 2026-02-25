@@ -1,5 +1,5 @@
 <div class="w-full">
-    <mat-radio-group [value]="cartService.deliveryMethod()?.id" (change)="upgradeDeliveryMethod($event.value)"
+    <mat-radio-group [value]="cartService.deliveryMethod()?.id" (change)="updateDeliveryMethod($event.value)"
         class="grid grid-cols-2 gap-4">
         @for (method of checkoutService.deliveryMethods(); track $index) {
         <label class="p-3 border border-gray-300 cursor-pointer w-full h-full hover:bg-purple-100">

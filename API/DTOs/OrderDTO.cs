@@ -14,6 +14,8 @@ public class OrderDTO
     public decimal SubTotal { get; set; }
     public decimal ShippingPrice { get; set; }
     public decimal Total { get; set; }
+    public decimal TotalDiscount { get; set; }
+    public string CouponId { get; set; } = null!;
     public required string Status { get; set; }
     public required string PaymentIntentId { get; set; }
 }

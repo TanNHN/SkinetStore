@@ -40,6 +40,7 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(config =>
 });
 // BC Redis service is Singleton => tbis cart using redis has to be Singleton
 builder.Services.AddSingleton<ICartService, CartService>();
+builder.Services.AddSingleton<ICouponService, CouponService>();
 builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<AppUser>().AddEntityFrameworkStores<StoreContext>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -69,13 +70,13 @@ app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrig
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseDefaultFiles();
-app.UseStaticFiles();
+// app.UseDefaultFiles();
+// app.UseStaticFiles();
 
 app.MapControllers();
 app.MapGroup("/api").MapIdentityApi<AppUser>(); // '/api' base route for identity endpoints
 app.MapHub<NotificationHub>("/hub/notifications");
-app.MapFallbackToController("Index", "Fallback");
+// app.MapFallbackToController("Index", "Fallback");
 
 //tự tạo db nếu ko có và sau đó gen seed data
 try

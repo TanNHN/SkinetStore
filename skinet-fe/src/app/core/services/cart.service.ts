@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { firstValueFrom, map, tap } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
-import { Cart, CartItem } from '../../shared/models/cart';
+import { Cart, CartItem, Coupon } from '../../shared/models/cart';
 import { DeliveryMethod } from '../../shared/models/deliveryMethod';
 import { Product } from '../../shared/models/product';
 
@@ -12,15 +12,23 @@ import { Product } from '../../shared/models/product';
 export class CartService {
   baseUrl = environment.apiUrl;
   private http = inject(HttpClient)
-
   cart = signal<Cart | null>(null);
   deliveryMethod = signal<DeliveryMethod | null>(null);
-
   totals = computed(() => {
     if (!this.cart()) return null;
-    const subTotal = this.cart()?.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    const subTotal = this.cart()!.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const shipping = this.deliveryMethod()?.price ?? 0;
-    const discount = 0;
+    let discount = 0;
+
+    if (this.cart()?.coupon && this.cart()?.coupon?.valid) {
+      if (this.cart()?.coupon?.amountOff && this.cart()?.coupon?.amountOff != 0) {
+        discount = this.cart()?.coupon?.amountOff ?? 0;
+      } else if (this.cart()?.coupon?.percentOff && this.cart()?.coupon?.percentOff != 0) {
+        discount = subTotal! * (this.cart()!.coupon!.percentOff / 100);
+      }
+    }
+
     return {
       subTotal,
       shipping,
@@ -37,6 +45,7 @@ export class CartService {
   getCart(id: string) {
     return this.http.get<Cart>(`${this.baseUrl}cart?id=${id}`).pipe(
       map(cart => {
+        console.log(cart);
         this.cart.set(cart);
         return cart;
       })
@@ -69,10 +78,7 @@ export class CartService {
       if (cart.items[index].quantity > quantity) {
         cart.items[index].quantity -= quantity;
       } else {
-        console.log(cart);
-
         cart.items.splice(index, 1);
-        console.log(cart);
       }
       if (cart.items.length === 0) {
         this.deleteCart();
@@ -123,5 +129,19 @@ export class CartService {
     const cart = new Cart();
     localStorage.setItem('cart_id', cart.id);
     return cart
+  }
+
+  applyCoupon(couponCode: string) {
+    return this.http.get<Coupon>(`${this.baseUrl}coupons/${couponCode}`);
+  }
+
+  async removeCoupon() {
+    this.cart.update(cart => {
+      if (cart) {
+        cart.coupon = undefined;
+      }
+      return cart;
+    });
+    await firstValueFrom(this.setCart(this.cart()!));
   }
 }

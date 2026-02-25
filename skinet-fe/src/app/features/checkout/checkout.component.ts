@@ -35,6 +35,7 @@ import { CheckoutDeliveryComponent } from "./checkout-delivery/checkout-delivery
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.scss',
 })
+
 export class CheckoutComponent implements OnInit, OnDestroy {
   addressElement?: StripeAddressElement;
   paymentElement?: StripePaymentElement;
@@ -50,8 +51,9 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   private accountService = inject(AccountService);
   private routerService = inject(Router);
   confirmationToken = signal<ConfirmationToken | undefined>(undefined);
-  isLoadding = signal(false);
+  isLoading = signal(false);
   private orderService = inject(OrderService);
+
   async ngOnInit() {
     try {
       this.addressElement = await this.stripeService.createAddressElement();
@@ -88,7 +90,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       ...state,
       address: event.complete
     }))
-
   }
 
   handlePaymentChange = (event: StripePaymentElementChangeEvent) => {
@@ -130,18 +131,20 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     if (event.selectedIndex === 1) {
       if (this.isSaveAddress) {
         const address = await this.getAddressFromTripeAddress();
-        address && firstValueFrom(this.accountService.updateAddress(address));
+        if (address) {
+          firstValueFrom(this.accountService.updateAddress(address));
+        }
       }
     }
     if (event.selectedIndex === 2) {
-      await firstValueFrom(this.stripeService.createOrUpdatePaymentIntent());
+      firstValueFrom(this.stripeService.createOrUpdatePaymentIntent());
     } if (event.selectedIndex === 3) {
       await this.getConfirmationToken();
     }
   }
 
   async confirmPayment(stepper: MatStepper) {
-    this.isLoadding.set(true);
+    this.isLoading.set(true);
     try {
       if (this.confirmationToken()) {
         const result = await this.stripeService.confirmToken(this.confirmationToken());
@@ -166,7 +169,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       this.snackBar.error(error.message || 'Confirm payment error');
       stepper.previous();
     } finally {
-      this.isLoadding.set(false);
+      this.isLoading.set(false);
     }
   }
 

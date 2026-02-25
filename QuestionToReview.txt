@@ -130,6 +130,8 @@ Square brackets typically represent input properties, and parentheses typically 
 
 5. combo: grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 
 
+6. Do token confirmation on Client side for simple checkout, use on server side for inventory check, Coupons usage
+
 TODO:
 
 1. Currently call api user-info after user logged in => return user data when logged in, remove addition api called for user-info
